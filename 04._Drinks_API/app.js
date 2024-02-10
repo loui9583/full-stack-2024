@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 
+
+let idCounter = 11;
 let drinks = [
     {
         id: 0,
@@ -86,14 +89,65 @@ app.delete("/:id", (req, res) => {
         res.send({
             error: "id not found"
         })
+    } else {
+        drinks = drinks.filter(drink => drink.id !== id);
+        res.send({
+            message: `Drink with id ${id}(${drink.name}) has been deleted`
+        })
     }
+})
 
-    else {
-    drinks = drinks.filter(drink => drink.id !== id);
-    res.send({
-        message: `Drink with id ${id}(${drink.name}) has been deleted`
-    })
+app.put("/:id", (req, res) => {
+
+    const id = Number(req.params.id);
+    const updatedDrink = req.body;
+
+    console.log(req.body)
+
+    drinks.find(drink => drink.id === id).name = updatedDrink.name;
+    drinks.find(drink => drink.id === id).ingredients = updatedDrink.ingredients;
+
+    res.send(drinks.find(drink => drink.id === id))
+
+})
+
+app.post("/", (req, res) => {
+    const newDrink = {
+        id: idCounter,
+        name: req.body.name,
+        ingredients: req.body.ingredients
     }
+    newDrink.id = idCounter;
+    idCounter += 1;
+    drinks.push(newDrink);
+    res.send("ok");
+
+})
+
+app.patch("/:id/ingredients", (req, res) => {
+
+    const id = Number(req.params.id);
+    const updatedDrink = req.body;
+
+    console.log(req.body)
+
+    drinks.find(drink => drink.id === id).ingredients = updatedDrink.ingredients;
+
+    res.send(drinks.find(drink => drink.id === id))
+
+})
+
+app.patch("/:id/name", (req, res) => {
+
+    const id = Number(req.params.id);
+    const updatedDrink = req.body;
+
+    console.log(req.body)
+
+    drinks.find(drink => drink.id === id).name = updatedDrink.name;
+
+    res.send(drinks.find(drink => drink.id === id))
+
 })
 
 app.listen(8080);
