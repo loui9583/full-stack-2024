@@ -2,8 +2,6 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-
-let idCounter = 11;
 let drinks = [
     {
         id: 0,
@@ -61,34 +59,32 @@ let drinks = [
         ingredients: ["Vodka", "Ginger beer", "Lime juice", "Ice", "Lime wedge for garnish"]
     }
 ];
-
+let idCounter = drinks.length;
+console.log(idCounter)
 app.get("/", (req, res) => {
-    res.send(drinks)
+    res.send({data: drinks})
 })
-
 app.get("/:id", (req, res) => {
     const id = Number(req.params.id);
-
     const drink = drinks.find(drink => drink.id === id);
 
     if (!drink) {
-        res.send({
-            error: "id not found"
+        res.status(404).send({
+            data: "id not found"
         });
     } else {
-        res.send(drink);
+        res.send({data: drink});
     }
 });
-
 app.delete("/:id", (req, res) => {
 
     const id = Number(req.params.id);
     const drink = drinks.find(drink => drink.id === id);
 
     if (!drink) {
-        res.send({
-            error: "id not found"
-        })
+        res.status(404).send({
+            data: "id not found"
+        });
     } else {
         drinks = drinks.filter(drink => drink.id !== id);
         res.send({
@@ -96,21 +92,14 @@ app.delete("/:id", (req, res) => {
         })
     }
 })
-
 app.put("/:id", (req, res) => {
-
     const id = Number(req.params.id);
     const updatedDrink = req.body;
-
     console.log(req.body)
-
     drinks.find(drink => drink.id === id).name = updatedDrink.name;
     drinks.find(drink => drink.id === id).ingredients = updatedDrink.ingredients;
-
     res.send(drinks.find(drink => drink.id === id))
-
 })
-
 app.post("/", (req, res) => {
     const newDrink = {
         id: idCounter,
@@ -121,33 +110,24 @@ app.post("/", (req, res) => {
     idCounter += 1;
     drinks.push(newDrink);
     res.send("ok");
-
 })
-
 app.patch("/:id/ingredients", (req, res) => {
 
     const id = Number(req.params.id);
     const updatedDrink = req.body;
-
     console.log(req.body)
-
     drinks.find(drink => drink.id === id).ingredients = updatedDrink.ingredients;
-
     res.send(drinks.find(drink => drink.id === id))
-
 })
-
 app.patch("/:id/name", (req, res) => {
-
     const id = Number(req.params.id);
     const updatedDrink = req.body;
-
     console.log(req.body)
-
     drinks.find(drink => drink.id === id).name = updatedDrink.name;
-
     res.send(drinks.find(drink => drink.id === id))
-
 })
 
-app.listen(8080);
+const PORT = 8080;
+app.listen(PORT, () => {
+    console.log(`Server is running at port ${PORT}`)
+});

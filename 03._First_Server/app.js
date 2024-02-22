@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+app.use(express.json());
 app.get("/", (req, res) => {
     res.send({
         data: "Welcome"
@@ -48,6 +48,22 @@ app.get("/wallet/:paymentOut", (req, res) => {
             cashedOut: paymentOut, newBalance: totalBalance
         })
     }
+})
+
+app.get("/test/:greeting", (req, res) => {
+
+
+    res.send(
+        //Path variable
+        `${req.params.greeting}
+        //Query parameter
+         ${req.query.name}`
+    );
+})
+
+app.post("/postman", (req, res) => {
+    console.log(req.body);
+    res.send(req.body);
 })
 
 app.listen(8080);
